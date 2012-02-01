@@ -25,7 +25,7 @@ void loop()
 
 void Sync()
 {
-  Serial.print("s");
+  Serial.print("z");
   unsigned long Tsend = millis(); // Take sent time
   while (Serial.available() == 0)
   {
@@ -43,7 +43,7 @@ void Pulse()
   tone(Sensor, 40000, 1); // 40 KHz transducer pulse for 1 ms
   unsigned long Tsense = capture(); // Capture time of reception
   unsigned long Tprop = (Tsense - (Tpulse + Toffset));
-  unsigned long Dist = (Tprop/3); // Speed of sound = ~330m/s = ~1/3 m/ms
+  float Dist = (Tprop/3); // Speed of sound = ~330m/s = ~1/3 m/ms
   Serial.print("Distance (m): ");
   Serial.println(Dist);
 }
@@ -52,19 +52,16 @@ long int capture()
 {
   int k = 0;
   int i = 0;
-  long int lin = 0;
+  unsigned long lin = 0;
   char buffer[] = "";
+  delay(500); // little bit of insurance for now, won't affect Toffset as there is no time-dependency
    while(Serial.available() > 0)
    {
-     buffer[0 + i] = Serial.read();
-     delay(10); // cannot remove!!!
-     k = 1;
+     buffer[i] = Serial.read();
+     delay(10); // cannot remove!!! Needs to wait for slow serial stream >.<
      i++;
    }
-   if(k == 1)
-   {
-     lin = strtol(buffer,NULL,10);
-   }
+   lin = strtoul(buffer,NULL,10);
    return lin;
 }
 
