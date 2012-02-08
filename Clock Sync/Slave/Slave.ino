@@ -1,14 +1,13 @@
 /*  Slave node code:-
     Lightweight code for slave node(s)
-    - Need to change to account for 'bufferUntil' compiler error
-    - Need to amend Master to "flush" confirmation character
 */
 unsigned long Tdetect = 0;
+char someChar = 0;
 
 void setup() 
 {
   ACSR = 
-  (0<<ACD) |   // Analog Comparator: Enabled
+  (1<<ACD) |   // Analog Comparator: (0 = Enabled, 1 = Disabled)
   (0<<ACBG) |   // Analog Comparator Bandgap Select: Disabled (Using both reference pins)
   (0<<ACO) |   // Analog Comparator Output: Off
   (1<<ACI) |   // Analog Comparator Interrupt Flag: Clear Pending Interrupt
@@ -17,23 +16,32 @@ void setup()
   (1<<ACIS1) | (1<<ACIS0);   // Analog Comparator Interrupt Mode: Comparator Interrupt on Rising Output Edge
   
   Serial.begin(9600);
-  Serial.bufferUntil('z');
 }
 
 void loop() 
 {
-  // Nothing
+  switch (someChar)
+  {
+    case 'a':
+      Tdetect = millis(); // save detection time
+      Serial.print("c"); // some arbitrary character that lets master node continue
+      Serial.print(Tdetect); // send detection time
+      someChar = 0;
+      Serial.read();
+      break;
+    case 'b':
+      Serial.print(millis());
+      someChar = 0;
+      break;
+  }
 }
 
 void serialEvent()
 {
-  Tdetect = millis(); // save detection time
-  Serial.print("c"); // some arbitrary character that lets master node continue
-  Serial.print(Tdetect);
+   someChar = 'a';
 }
 
 ISR(ANALOG_COMP_vect)
 {
-  Serial.print(millis());
+   someChar = 'b';
 }
-
