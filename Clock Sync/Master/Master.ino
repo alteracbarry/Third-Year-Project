@@ -18,23 +18,19 @@ unsigned long Tsend = 0;
 void setup()
 {
   attachInterrupt(0, Sync, RISING); // IRQ0 attached to pin 2 on Duemilanove
-  attachInterrupt(1, Pulse, RISING); // IRQ2 attached to pin 3 " "
+  attachInterrupt(1, Pulse, RISING); // IRQ1 attached to pin 3 " "
   Serial.begin(9600);
 }
 
 void loop()
 {
-  Serial.println(millis());
   switch (someChar)
   {
     case 'a':
       digitalWrite(13, HIGH);
       Serial.print("z");
       Tsend = millis(); // Take sent time
-      while (conf != 'c')
-      {
-        conf = Serial.read();
-      }
+      confirm();
       Trec = millis(); // and receive time
       RTTd2 = (Trec - Tsend)/2;
       Toffset = capture() - RTTd2;
@@ -57,6 +53,7 @@ void loop()
       digitalWrite(13, HIGH);
       unsigned long Tpulse = millis(); // Timestamp pulse
       tone(Sensor, 40000, 1); // 40 KHz transducer pulse for 1 ms
+      confirm();
       unsigned long Tsense = capture(); // Capture time of reception
       unsigned long Tprop = (Tsense - (Tpulse + Toffset));
       float Dist = (Tprop/3); // Speed of sound = ~330m/s = ~1/3 m/ms
@@ -70,29 +67,28 @@ void loop()
 
 void Sync()
 {
-  someChar = 'a';
+  someChar = 'a'; // flag for sync routine
 }
 
 void Pulse()
 {
-  someChar = 'b';
+  someChar = 'b'; // flag for pulse routine
+}
+
+void confirm()
+{
+  while (conf != 'c')
+      {
+        conf = Serial.read();
+      }
 }
 
 long int capture()
 {
-  int k = 0;
-  int i = 0;
   unsigned long lin = 0;
   char buffer[] = "";
-  delay(100); // little bit of insurance for now, won't affect Toffset as there is no time-dependency
-   while(Serial.available() > 0)
-   {
-     buffer[i] = Serial.read();
-     delay(10); // cannot remove!!! Needs to wait for slow serial stream >.<
-     i++;
-   }
-   lin = strtoul(buffer,NULL,10);
-   return lin;
+  Serial.readBytes(buffer,7); // reads 7 digits: up to 166 minutes
+  Serial.setTimeout(1000);
+  lin = strtoul(buffer,NULL,10);
+  return lin;
 }
-
- 
