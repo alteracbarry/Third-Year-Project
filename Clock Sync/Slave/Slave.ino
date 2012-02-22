@@ -1,7 +1,10 @@
-/*  Slave node code
+/*  Slave node code:-
+    Lightweight code for slave node(s)
 */
 unsigned long Tdetect = 0;
 char flag = 0;
+int i = 0;
+
 
 void setup() 
 {
@@ -23,14 +26,19 @@ void loop()
   {
     case 'a':
       Tdetect = millis(); // save detection time
-      Serial.print("c"); // some arbitrary character that lets master node continue
-      Serial.print(Tdetect); // send detection time
+      Serial.print("c"); // some arbitrary someCharacter that lets master node continue
+      i++;
+      if (i < 5)
+      {
+        Serial.print(Tdetect); // send detection time
+        i = 0;
+      }        
       flag = 0;
       Serial.read();
       break;
     case 'b':
       Serial.print(millis());
-      delay(1000); // to seperate transmissions adequately
+      delay(1000);
       flag = 0;
       break;
   }
@@ -41,7 +49,7 @@ void serialEvent()
    flag = 'a';
 }
 
-ISR(ANALOG_COMP_vect) // AIN0 & 1 on pins 6 & 7
+ISR(ANALOG_COMP_vect) // AIN0 & 1 on pins 6  & 7
 {
    flag = 'b';
 }
