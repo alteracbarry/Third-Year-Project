@@ -10,8 +10,7 @@ int Sensor = 8; // Ultrasonic Transducer at pin 4
 unsigned long RTT = 999;
 unsigned long Dist = 0; // Distance 
 long Toffset = 0; // Master and Slave clock difference (ms)
-char flag = 0;
-char conf = 0;
+boolean flag = LOW;
 unsigned long Trec = 0;
 unsigned long Tsend = 0;
 unsigned long Tpulse = 0;
@@ -30,7 +29,7 @@ void loop()
 {
   switch (flag)
   {
-    case 'a':
+    case HIGH:
       digitalWrite(13, HIGH);
       for (i; i < 5; i++);
       {
@@ -67,22 +66,21 @@ void loop()
       RTT = 999;
       Trec = 0;
       Tsend = 0;
-      flag = 0;
+      flag = LOW;
       i = 0;
       digitalWrite(13, LOW);
       break;
   }
-  Serial.read();
 }
 
 void Sync()
 {
-  flag = 'a';
+  flag = HIGH;
 }
 
 void confirm()
 {
-  while (conf != 'c')
+  while (char conf != 'c')
   {
     conf = Serial.read();
   }
