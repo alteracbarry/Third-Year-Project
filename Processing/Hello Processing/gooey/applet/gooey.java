@@ -1,7 +1,28 @@
+import processing.core.*; 
+import processing.xml.*; 
+
+import processing.serial.*; 
+
+import java.applet.*; 
+import java.awt.Dimension; 
+import java.awt.Frame; 
+import java.awt.event.MouseEvent; 
+import java.awt.event.KeyEvent; 
+import java.awt.event.FocusEvent; 
+import java.awt.Image; 
+import java.io.*; 
+import java.net.*; 
+import java.text.*; 
+import java.util.*; 
+import java.util.zip.*; 
+import java.util.regex.*; 
+
+public class gooey extends PApplet {
+
 PFont font;
 PImage img0;
 PImage img1;
-import processing.serial.*;
+
 Serial arduino; // Create object from Serial class
 float val; // Data received from the serial port
 int port = 0;
@@ -13,7 +34,7 @@ String commlist[];
 String buffer = "Nothing";
 String Time = "never";
 
-void setup() 
+public void setup() 
 {
   size(350, 350);
   font = loadFont("DroidSans-48.vlw");
@@ -23,7 +44,7 @@ void setup()
   textSize(12);
   smooth();
 }
-void draw() 
+public void draw() 
 {
   background(245);
   if (menu)
@@ -67,7 +88,7 @@ void draw()
 }
 
 
-void menu() // Port Selection Menu
+public void menu() // Port Selection Menu
 {
   String commlist[] = Serial.list(); 
   String gravy = join(commlist, "");
@@ -86,14 +107,14 @@ void menu() // Port Selection Menu
   }
 }
 
-void startSerial() // Assigns the serial steam a connection to listen to
+public void startSerial() // Assigns the serial steam a connection to listen to
 {
   arduinoPort = Serial.list()[port];
   arduino = new Serial(this, arduinoPort, 19200);
   connect = false;
 }
 
-boolean drawButton(float x, float y, String data) // draws a button at position (x,y) containing  
+public boolean drawButton(float x, float y, String data) // draws a button at position (x,y) containing  
 {                                                 // text; for use in if statements 
 
   stroke(250, 163, 0);
@@ -103,9 +124,6 @@ boolean drawButton(float x, float y, String data) // draws a button at position 
   text(data, x+30, y+2);
   if (mouseX>x && mouseY>y && mouseX<(x+60) && mouseY<(y+20) && mousePressed)
   {
-    while (mousePressed)
-    {
-    } 
     fill(250, 163, 0, 75);
     rect(x, y, 60, 20);
     return true;
@@ -115,39 +133,39 @@ boolean drawButton(float x, float y, String data) // draws a button at position 
   return false;
 }
 
-void tickbox(float x, float y)
+public void tickbox(float x, float y)
 {
-
+  delay(100);
   if (tickbox)
-  {
-    image(img1, x, y);
-  }
-  else
-  {
-    image(img0, x, y);
-  }
+   {
+   image(img1, x, y);
+   }
+   else
+   {
+   image(img0, x, y);
+   }
   if (mouseX>x && mouseY>y && mouseX<(x+12) && mouseY<(y+12) && mousePressed)
   {
-    if (!mousePressed)
-    {
-      tickbox = !tickbox;
-    }
+    tickbox = !tickbox;
   }
 }
 
-void serialEvent(Serial arduino)
+public void serialEvent(Serial arduino)
 {
   if (tickbox)
   {
     Time();
     delay(10);
-    buffer = arduino.readBytes(val);
-    //arduino.setTimeout();
+    buffer = arduino.readString();
   }
 }
 
-void Time()
+public void Time()
 {
   Time = hour() + ":" + minute() + ":" + second();
 }
 
+  static public void main(String args[]) {
+    PApplet.main(new String[] { "--bgcolor=#F0F0F0", "gooey" });
+  }
+}

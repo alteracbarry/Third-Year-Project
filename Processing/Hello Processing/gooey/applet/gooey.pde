@@ -103,9 +103,6 @@ boolean drawButton(float x, float y, String data) // draws a button at position 
   text(data, x+30, y+2);
   if (mouseX>x && mouseY>y && mouseX<(x+60) && mouseY<(y+20) && mousePressed)
   {
-    while (mousePressed)
-    {
-    } 
     fill(250, 163, 0, 75);
     rect(x, y, 60, 20);
     return true;
@@ -117,21 +114,18 @@ boolean drawButton(float x, float y, String data) // draws a button at position 
 
 void tickbox(float x, float y)
 {
-
+  delay(100);
   if (tickbox)
-  {
-    image(img1, x, y);
-  }
-  else
-  {
-    image(img0, x, y);
-  }
+   {
+   image(img1, x, y);
+   }
+   else
+   {
+   image(img0, x, y);
+   }
   if (mouseX>x && mouseY>y && mouseX<(x+12) && mouseY<(y+12) && mousePressed)
   {
-    if (!mousePressed)
-    {
-      tickbox = !tickbox;
-    }
+    tickbox = !tickbox;
   }
 }
 
@@ -141,8 +135,7 @@ void serialEvent(Serial arduino)
   {
     Time();
     delay(10);
-    buffer = arduino.readBytes(val);
-    //arduino.setTimeout();
+    buffer = arduino.readString();
   }
 }
 

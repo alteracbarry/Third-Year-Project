@@ -1,8 +1,8 @@
 /* Script for Master Node :-
-   Implements a seperate ASCII-to-long capture method and uses
-   interrupts for interaction (no use of loop)
-   Areas for Improvement: Optimise, test, code for display instead of Serial
-*/
+ Implements a seperate ASCII-to-long capture method and uses
+ interrupts for interaction (no use of loop)
+ Areas for Improvement: Optimise, test, code for display instead of Serial
+ */
 #include <SoftwareSerial.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -29,47 +29,47 @@ void loop()
 {
   switch (flag)
   {
-    case HIGH:
-      digitalWrite(13, HIGH);
-      for (i; i < 5; i++);
+  case HIGH:
+    digitalWrite(13, HIGH);
+    for (i; i < 5; i++);
+    {
+      Serial.print("z");
+      Tsend = millis(); // Take sent time
+      confirm();
+      Trec = millis(); // and receive time
+      if ((Trec - Tsend) < RTT)
       {
-        Serial.print("z");
-        Tsend = millis(); // Take sent time
-        confirm();
-        Trec = millis(); // and receive time
-        if ((Trec - Tsend) < RTT)
-        {
-          RTT = (Trec - Tsend);
-        }
+        RTT = (Trec - Tsend);
       }
-      Toffset = capture() - (RTT/2) - Tsend;
-      Tpulse = millis(); // Timestamp pulse
-      tone(Sensor, 40000, 1); // 40 KHz transducer pulse for 1 ms
-      unsigned long Tsense = capture(); // Capture time of reception
-      long Tprop = ((Tsense - Toffset) - Tpulse);
-      float Dist = (Tprop * 0.33); // Speed of sound = ~330m/s
-      if (Tsense == 0)
-      {  
-        mySerial.println("No signal");
-      } 
-      else 
-      {
-        //Serial.println(Tpulse);
-        //Serial.println(Tsense);
-        //Serial.println(Toffset);
-        mySerial.print("Distance :- ");
-        mySerial.print(Dist);
-        mySerial.println(" metres");
-      }      
-      Tpulse = 0;
-      conf = 0;
-      RTT = 999;
-      Trec = 0;
-      Tsend = 0;
-      flag = LOW;
-      i = 0;
-      digitalWrite(13, LOW);
-      break;
+    }
+    Toffset = capture() - (RTT/2) - Tsend;
+    Tpulse = millis(); // Timestamp pulse
+    tone(Sensor, 40000, 1); // 40 KHz transducer pulse for 1 ms
+    unsigned long Tsense = capture(); // Capture time of reception
+    long Tprop = ((Tsense - Toffset) - Tpulse);
+    float Dist = (Tprop * 0.33); // Speed of sound = ~330m/s
+    if (Tsense == 0)
+    {  
+      mySerial.println("No signal");
+    } 
+    else 
+    {
+      //Serial.println(Tpulse);
+      //Serial.println(Tsense);
+      //Serial.println(Toffset);
+      mySerial.print("Distance :- ");
+      mySerial.print(Dist);
+      mySerial.println(" metres");
+    }      
+    Tpulse = 0;
+    conf = 0;
+    RTT = 999;
+    Trec = 0;
+    Tsend = 0;
+    flag = LOW;
+    i = 0;
+    digitalWrite(13, LOW);
+    break;
   }
 }
 
@@ -95,3 +95,5 @@ long int capture()
   lin = strtoul(buffer,NULL,10);
   return lin;
 }
+
+
