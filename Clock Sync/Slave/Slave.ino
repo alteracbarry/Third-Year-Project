@@ -26,7 +26,7 @@ void loop()
   {
     case 'a':
       Tdetect = millis(); // save detection time
-      Serial.print("c"); // some arbitrary character that lets master node continue
+      Serial.print("c"); // some arbitrary someCharacter that lets master node continue
       i++;
       if (i < 5)
       {
