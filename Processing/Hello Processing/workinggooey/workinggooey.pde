@@ -3,6 +3,8 @@ import processing.serial.*;
 Serial arduino; // Create object from Serial class
 float val; // Data received from the serial port
 int port = 0;
+int milsec = 0;
+int frames = 0;
 boolean menu = true;
 boolean connect = false;
 String arduinoPort;
@@ -12,7 +14,8 @@ String Time = "never";
 
 void setup() 
 {
-  size(350, 350);
+  size(350, 300);
+  frame.setResizable(true);
   font = loadFont("DroidSans-48.vlw");
   textFont(font);
   textSize(12);
@@ -21,6 +24,7 @@ void setup()
 }
 void draw() 
 {
+  println(frameRate);
   background(245);
   if (menu)
   {
@@ -37,10 +41,11 @@ void draw()
     text("Connected to " + Serial.list()[port], width/2, height);
     if (drawButton(0, 0, "Back")) // "Back" button
     {
+      Time = "Never";
       menu = true;
       arduino.stop();
     }
-    if (drawButton(width/2 - 30, height/2 + 20, "Refresh"))
+    if (drawButtonwtimer(width/2 - 30, height/2 + 20, "Refresh"))
     {
       delay(100);
       if (arduino.available() > 0)
@@ -89,7 +94,7 @@ void startSerial() // Assigns the serial steam a connection to listen to
 }
 
 boolean drawButton(float x, float y, String data) // draws a button at position (x,y) containing  
-{                                                 // text; for use in if statements 
+{                                                 // text; for use inside if parameters 
   stroke(250, 163, 0);
   strokeWeight(1);
   fill(0);
@@ -97,9 +102,6 @@ boolean drawButton(float x, float y, String data) // draws a button at position 
   text(data, x+30, y+2);
   if (mouseX>x && mouseY>y && mouseX<(x+60) && mouseY<(y+20) && mousePressed)
   {
-    while (mousePressed)
-    {
-    } 
     fill(250, 163, 0, 75);
     rect(x, y, 60, 20);
     return true;
@@ -109,7 +111,33 @@ boolean drawButton(float x, float y, String data) // draws a button at position 
   return false;
 }
 
-void Time()
-{
-  Time = hour() + ":" + minute() + ":" + second();
+boolean drawButtonwtimer(float x, float y, String data) // same as drawButton() but called only between
+{                                                       // intervals, hits framerate so used sparsely
+  stroke(250, 163, 0);
+  strokeWeight(1);
+  fill(0);
+  textAlign(CENTER, TOP);
+  text(data, x+30, y+2);
+  if (mouseX>x && mouseY>y && mouseX<(x+60) && mouseY<(y+20) && mousePressed)
+  {
+    if (millis() - milsec >= 1000)
+    {
+      //frames = frameCount;
+      fill(250, 163, 0, 75);
+      rect(x, y, 60, 20);
+      return true;
+    }
+  }
+  fill(250, 163, 0, 50);
+  rect(x, y, 60, 20);
+  return false;
 }
+
+void Time() // Prints elapsed time since last called
+{
+  milsec = millis() - milsec;
+  Time =  milsec/1000 + " seconds ago";
+  //Time = hour() + ":" + Minute + ":" + Second;
+  milsec = millis();
+}
+
