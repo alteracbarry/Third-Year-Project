@@ -25,19 +25,19 @@ void loop()
   switch (flag)
   {
     case 'a':
-      Tdetect = millis(); // save detection time
-      Serial.print("c"); // some arbitrary someCharacter that lets master node continue
-      i++;
-      if (i < 5)
-      {
+      Tdetect = micros()/100; // save detection time
+      Serial.print("c"); // some arbitrary character that lets master node continue
+      //i++;
+      //if (i < 5)
+      //{
         Serial.print(Tdetect); // send detection time
-        i = 0;
-      }        
+      //  i = 0;
+      //}        
       flag = 0;
-      Serial.read();
+      Serial.read(); // flush Incomming Serial buffer
       break;
     case 'b':
-      Serial.print(millis());
+      Serial.print(micros()/100);
       delay(1000);
       flag = 0;
       break;

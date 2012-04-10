@@ -1,3 +1,0 @@
-
-gooey
-gooey.jar,core.jar,RXTXcomm.jar,serial.jar

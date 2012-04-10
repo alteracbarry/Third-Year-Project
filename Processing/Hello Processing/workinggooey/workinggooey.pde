@@ -24,7 +24,7 @@ void setup()
 }
 void draw() 
 {
-  println(frameRate);
+  //println(frameRate);
   background(245);
   if (menu)
   {
@@ -50,7 +50,7 @@ void draw()
       delay(100);
       if (arduino.available() > 0)
       {
-        buffer = arduino.readString();
+        buffer = "'" + arduino.readString() + "'";
       }
       else  
       {
@@ -60,7 +60,7 @@ void draw()
     }
     fill(0);
     textAlign(CENTER, TOP);
-    text("Arduino says:    " + '"' + buffer + '"', width/2, height/2 - 25);
+    text("Arduino says:    " + buffer, width/2, height/2 - 25);
     fill(100);
     text("Last checked  " + Time, width/2, height/2 + 45);
   }
@@ -136,8 +136,8 @@ boolean drawButtonwtimer(float x, float y, String data) // same as drawButton() 
 void Time() // Prints elapsed time since last called
 {
   milsec = millis() - milsec;
-  Time =  milsec/1000 + " seconds ago";
-  //Time = hour() + ":" + Minute + ":" + Second;
+  //Time =  milsec/1000 + " seconds ago";
+  Time = hour() + ":" + minute() + ":" + second();
   milsec = millis();
 }
 
